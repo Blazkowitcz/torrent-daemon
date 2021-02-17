@@ -1,0 +1,27 @@
+{
+  "name": "torrent-daemon",
+  "version": "1.0.0",
+  "description": "torrent client",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blazkowitcz/torrent-daemon.git"
+  },
+  "keywords": [
+    "torrent",
+    "node"
+  ],
+  "author": "Blazkowicz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Blazkowitcz/torrent-daemon/issues"
+  },
+  "homepage": "https://github.com/Blazkowitcz/torrent-daemon#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "webtorrent": "^0.114.1"
+  }
+}

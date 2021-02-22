@@ -20,17 +20,4 @@ function getClient() {
     return this.client;
 }
 
-/**
- * Add a torrent
- * @param {Request} req 
- * @param {Result} name 
- */
-function addTorrent(req, name) {
-    this.client.add(req.app.locals.public + name, { path: 'C:\\Users\\Blazkowicz\\Projects' }, function (torrent) {
-        torrent.on('done', function () {
-            console.log("torrent done");
-        })
-    })
-}
-
-module.exports = { init, getClient, addTorrent }
+module.exports = { init, getClient }

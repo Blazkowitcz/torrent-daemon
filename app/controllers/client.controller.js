@@ -1,4 +1,7 @@
-var Torrent = require('../models/torrent.model');
+var Torrent = require('../database/models/torrent.model');
+var config = require('../../client_conf.json');
+
+const db = require('../database/');
 
 /**
  * Add a torrent
@@ -7,14 +10,22 @@ var Torrent = require('../models/torrent.model');
  */
 exports.addTorrent = (req, res) => {
     var file = req.files.file;
-    var path = __dirname + '\\..\\..\\public\\files\\' + file.name;
+    var filename = new Date().getTime() + '.torrent';
+    var path = __dirname + '\\..\\..\\public\\files\\' + filename;
     file.mv(path, (err) => {
-        if(err){
-            res.send("Erreur lors de l'ajout du torrent");
+        if (err) {
+            res.send("Error while adding torrent");
         }
-        client = req.app.locals.client
-        client.addTorrent(req, file.name);
-        res.send(true);
+        try {
+            client = req.app.locals.client.client
+            client.add(req.app.locals.public + filename, { path: config.torrent_destination }, function (torrent) {
+                Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
+            });
+            res.send(true);
+        } catch (err) {
+            res.send("An error occured");
+        }
+
     });
 }
 
@@ -26,11 +37,9 @@ exports.addTorrent = (req, res) => {
  */
 exports.getTorrents = (req, res) => {
     var client = req.app.locals.client.client;
-    var torrents = client.torrents;
     var results = [];
-    torrents.forEach(torrent => {
-        var new_torrent = new Torrent({name : torrent.name, done: torrent.done });
-        results.push(new_torrent);
+    client.torrents.forEach(torrent => {
+        results.push(new Torrent({ name: torrent.name, done: torrent.done, infoHash: torrent.infoHash, path: torrent.path }));
     });
     res.send(results);
 }

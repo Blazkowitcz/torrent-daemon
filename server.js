@@ -12,11 +12,12 @@ app.use(fileUpload())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 require("./app/routes/client.route")(app);
+require("./app/routes/torrent.route")(app);
 
 /**
  * App init
  */
 app.listen(conf.port, function() {
-    client.init();
+    client.init(app);
     client.getClient();
 })

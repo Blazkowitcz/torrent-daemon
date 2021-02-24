@@ -39,7 +39,6 @@ exports.getTorrents = (req, res) => {
     var results = [];
     current_client = torrent_client.getClient();
     current_client.torrents.forEach(torrent => {
-        console.log(torrent);
         results.push(new Torrent({ name: torrent.name, done: torrent.done, status: utils.getStatus(torrent), infoHash: torrent.infoHash, path: torrent.path, download_speed: torrent.downloadSpeed, upload_speed: torrent.uploadSpeed, downloaded: torrent.downloaded, uploaded: torrent.uploaded }));
     });
     res.send(results);

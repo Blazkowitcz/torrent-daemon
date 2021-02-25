@@ -4,12 +4,15 @@ const client_torrent = require('./app/torrent-client');
 const conf = require('./client_conf.json')
 const bodyParser = require('body-parser');
 const app = express();
+const cors = require('cors');
 
 var client = client_torrent;
 app.locals.client = client;
 app.locals.public = __dirname + '\\public\\files\\';
 app.use(fileUpload())
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
 
 require("./app/routes/client.route")(app);
 require("./app/routes/torrent.route")(app);

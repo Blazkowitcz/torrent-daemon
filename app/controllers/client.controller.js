@@ -30,7 +30,7 @@ exports.addTorrent = (req, res) => {
 }
 
 /**
- * Get the list of torrents active in the client
+ * Get the list of torrents active in client
  * @param {Request} req 
  * @param {Result} res 
  * @returns {Array} Torrent
@@ -39,7 +39,43 @@ exports.getTorrents = (req, res) => {
     var results = [];
     current_client = torrent_client.getClient();
     current_client.torrents.forEach(torrent => {
-        results.push(new Torrent({ name: torrent.name, done: torrent.done, status: utils.getStatus(torrent), infoHash: torrent.infoHash, path: torrent.path, download_speed: torrent.downloadSpeed, upload_speed: torrent.uploadSpeed, downloaded: torrent.downloaded, uploaded: torrent.uploaded }));
+        results.push(new Torrent({ 
+            name: torrent.name, 
+            done: torrent.done, 
+            progress: torrent.progress * 100, 
+            size: torrent.size, 
+            status: utils.getStatus(torrent), 
+            infoHash: torrent.infoHash, 
+            path: torrent.path, 
+            download_speed: torrent.downloadSpeed, 
+            upload_speed: torrent.uploadSpeed, 
+            downloaded: torrent.downloaded, 
+            uploaded: torrent.uploaded 
+        }));
+    });
+    res.send(results);
+}
+
+/**
+ * Get moving informations from torrents active in client
+ * @param {Request} req 
+ * @param {Result} res
+ * @returns {Array} Torrent
+ */
+exports.getTorrentsShortData = (req, res) => {
+    var results = [];
+    current_client = torrent_client.getClient();
+    current_client.torrents.forEach(torrent => {
+        results.push(new Torrent({ 
+            done: torrent.done,
+            progress: torrent.progress * 100,
+            status: utils.getStatus(torrent),
+            infoHash: torrent.infoHash,
+            download_speed: torrent.downloadSpeed,
+            upload_speed: torrent.uploadSpeed,
+            downloaded: torrent.downloaded,
+            uploaded: torrent.uploaded
+        }));
     });
     res.send(results);
 }

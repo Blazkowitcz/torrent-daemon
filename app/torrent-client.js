@@ -1,6 +1,8 @@
 const WebTorrent = require('webtorrent');
 const Torrent = require('./database/models/torrent.model');
 var config = require('../client_conf.json');
+var emo = require('node-emoji');
+var logs = require('./utils/logs.utils');
 
 var client = null;
 var app = null;
@@ -14,9 +16,9 @@ function init(application) {
     app = application;
     client = new WebTorrent();
     client.on('error', function (err) {
-        console.log(err);
+        logs.warning(err.message);
     });
-    console.log("# Client torrent démarré #");
+    logs.success("Client torrent démarré")
     startTorrents();
 }
 
@@ -38,7 +40,7 @@ function startTorrents() {
             return null;
         }
         data.forEach(torrent => {
-            client.add(app.locals.public + torrent.filename, { path: config.torrent_destination }, function (torrent) {
+            client.add(config.torrent_location + torrent.filename, { path: config.torrent_destination }, function (torrent) {
             });
         });
     });

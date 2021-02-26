@@ -11,14 +11,14 @@ const torrent_client = require('../torrent-client');
 exports.addTorrent = (req, res) => {
     var file = req.files.file;
     var filename = new Date().getTime() + '.torrent';
-    var path = __dirname + '\\..\\..\\public\\files\\' + filename;
+    var path = config.torrent_location + filename;
     current_client = torrent_client.getClient();
     file.mv(path, (err) => {
         if (err) {
             res.send("Error while adding torrent");
         }
         try {
-            current_client.add(req.app.locals.public + filename, { path: config.torrent_destination }, function (torrent) {
+            current_client.add(config.torrent_location + filename, { path: config.torrent_destination }, function (torrent) {
                 Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
             });
             res.send(true);

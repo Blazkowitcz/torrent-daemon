@@ -38,7 +38,8 @@ function startTorrents() {
             return null;
         }
         data.forEach(torrent => {
-            client.add(app.locals.public + torrent.filename, { path: config.torrent_destination }, function (torrent) {
+            console.log(config.torrent_location + torrent.filename);
+            client.add(config.torrent_location + torrent.filename, { path: config.torrent_destination }, function (torrent) {
             });
         });
     });

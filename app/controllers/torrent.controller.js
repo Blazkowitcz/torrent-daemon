@@ -49,14 +49,14 @@ exports.getTorrents = (req, res) => {
             name: torrent.name, 
             done: torrent.done, 
             progress: torrent.progress * 100, 
-            size: torrent.size, 
+            size: utils.sizeReadable(torrent.length, false), 
             status: utils.getStatus(torrent), 
             infoHash: torrent.infoHash, 
             path: torrent.path, 
-            download_speed: torrent.downloadSpeed, 
-            upload_speed: torrent.uploadSpeed, 
-            downloaded: torrent.downloaded, 
-            uploaded: torrent.uploaded 
+            download_speed: utils.sizeReadable(torrent.downloadSpeed, true), 
+            upload_speed: utils.sizeReadable(torrent.uploadSpeed, true),
+            downloaded: utils.sizeReadable(torrent.downloaded, false), 
+            uploaded: utils.sizeReadable(torrent.uploaded, false) 
         }));
     });
     res.send(results);
@@ -77,10 +77,10 @@ exports.getTorrentsShortData = (req, res) => {
             progress: torrent.progress * 100,
             status: utils.getStatus(torrent),
             infoHash: torrent.infoHash,
-            download_speed: torrent.downloadSpeed,
-            upload_speed: torrent.uploadSpeed,
-            downloaded: torrent.downloaded,
-            uploaded: torrent.uploaded
+            download_speed: utils.sizeReadable(torrent.downloadSpeed, true), 
+            upload_speed: utils.sizeReadable(torrent.uploadSpeed, true),
+            downloaded: utils.sizeReadable(torrent.downloaded, false), 
+            uploaded: utils.sizeReadable(torrent.uploaded, false)
         }));
     });
     res.send(results);

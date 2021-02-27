@@ -18,9 +18,33 @@ function getStatus(torrent){
     }
 }
 
+/**
+ * Return the status color of a torrent
+ * @param {String} status
+ * @return {String}
+ */
+function getStatusColor(status){
+    switch (status) {
+        case 'Checking':
+            return 'info';
+        case 'Paused':
+            return 'warning';
+        case 'Downloading':
+            return 'primary';
+        case 'Seeding': 
+            return 'success';
+    }
+}
+
+/**
+ * Transform bytes values to readable value
+ * @param {Integer} bytes 
+ * @param {Boolean} speed 
+ * @return {String}
+ */
 function sizeReadable(bytes, speed) {
     var i = -1;
-    var byteUnits = [' Kb', ' Mb', ' Gb', ' Tb'];
+    var byteUnits = [' KB', ' MB', ' GB', ' TB'];
     do {
         bytes = bytes / 1024;
         i++;
@@ -32,4 +56,4 @@ function sizeReadable(bytes, speed) {
     return result;
 }
 
-module.exports = { getStatus, sizeReadable }
+module.exports = { getStatus, sizeReadable, getStatusColor }

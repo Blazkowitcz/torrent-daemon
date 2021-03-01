@@ -25,7 +25,9 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "fs-extra": "^9.1.0",
     "multer": "^1.4.2",
+    "mv": "^2.1.1",
     "node-emoji": "^1.10.0",
     "sqlite3": "^5.0.2",
     "webtorrent": "^0.114.1"

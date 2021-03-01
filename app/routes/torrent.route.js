@@ -13,4 +13,5 @@ module.exports = app => {
      */
     app.get('/torrents', torrent.getTorrents);
     app.get('/torrents-short', torrent.getTorrentsShortData);
+    app.post('/torrent-move', torrent.moveTorrent);
 }

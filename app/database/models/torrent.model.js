@@ -42,6 +42,23 @@ Torrent.getAll = function getAll(callback) {
     });
 }
 
+Torrent.move = function move(hash, destination, callback) {
+    const db = require('../../database');
+    db.serialize(function() {
+        var stmt = db.prepare("UPDATE torrents SET location = ? WHERE hash = ?");
+        stmt.run(destination, hash);
+        stmt.finalize();
+        callback(null, true);
+    });
+}
+
+Torrent.getOne = function getOne(hash, callback) {
+    const db = require('../../database');
+    db.get("SELECT * FROM torrents WHERE hash = " + "'" + hash + "'", (err, row) => {
+        if(!err){ callback(row); }
+    })
+}
+
 /**
  * Database Schema
  */

@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-require("./app/routes/client.route")(app);
 require("./app/routes/torrent.route")(app);
 
 /**

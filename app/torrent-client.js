@@ -1,6 +1,7 @@
 const WebTorrent = require('webtorrent');
 const Torrent = require('./database/models/torrent.model');
 var config = require('../client_conf.json');
+var utils = require('../app/utils/torrent.utils');
 var emo = require('node-emoji');
 var logs = require('./utils/logs.utils');
 
@@ -35,15 +36,23 @@ function getClient() {
  * @returns null
  */
 function startTorrents() {
-    Torrent.getAll(function(err, data) {
-        if(err){
+    Torrent.getAll(function (err, data) {
+        if (err) {
             return null;
         }
         data.forEach(torrent => {
-            client.add(config.torrent_location + torrent.filename, { path: config.torrent_destination }, function (torrent) {
+            client.add(config.torrent_location + torrent.filename, { path: torrent.location }, function (torrent) {
             });
         });
     });
 }
 
-module.exports = { init, getClient }
+function getTorrentByHash(hash) {
+    client.torrents.forEach(torrent => {
+        if (torrent.infoHash === hash) {
+            return torrent;
+        }
+    })
+}
+
+module.exports = { init, getClient, getTorrentByHash }

@@ -1,5 +1,6 @@
 const torrent_client = require('../torrent-client');
 var Torrent = require('../database/models/torrent.model');
+var Peer = require('../database/models/peer.model');
 var utils = require('../utils/torrent.utils');
 var config = require('../../client_conf.json');
 const fs = require('fs-extra');
@@ -11,8 +12,7 @@ const fs = require('fs-extra');
  * @returns {Boolean}
  */
 exports.pauseTorrent = (req, res) => {
-    current_client = torrent_client.getClient();
-    current_client.torrents.forEach(torrent => {
+    torrent_client.getClient().torrents.forEach(torrent => {
         if (torrent.infoHash === req.body.hash) {
             torrent.pause();
         }
@@ -27,8 +27,7 @@ exports.pauseTorrent = (req, res) => {
  * @returns {Boolean} 
  */
 exports.resumeTorrent = (req, res) => {
-    current_client = torrent_client.getClient();
-    current_client.torrents.forEach(torrent => {
+    torrent_client.getClient().torrents.forEach(torrent => {
         if (torrent.infoHash === req.body.hash) {
             torrent.resume();
         }
@@ -44,8 +43,7 @@ exports.resumeTorrent = (req, res) => {
  */
 exports.getTorrents = (req, res) => {
     var results = [];
-    current_client = torrent_client.getClient();
-    current_client.torrents.forEach(torrent => {
+    torrent_client.getClient().torrents.forEach(torrent => {
         results.push(new Torrent({
             name: torrent.name,
             done: torrent.done,
@@ -62,6 +60,45 @@ exports.getTorrents = (req, res) => {
         }));
     });
     res.send(results);
+}
+
+/**
+ * Get torrent informations
+ * @param {Request} req 
+ * @param {Result} res 
+ * @returns {Array} 
+ */
+exports.getTorrentInfo = (req, res) => {
+    torrent_exist = false;
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.params.hash) {
+            torrent.wires.forEach(wire => {
+                console.log(wire.uploadSpeed());
+            });
+            torrent_exist = true;
+            res.send(new Torrent({
+                name: torrent.name,
+                done: torrent.done,
+                progress: torrent.progress * 100,
+                size: utils.sizeReadable(torrent.length, false),
+                status: status = utils.getStatus(torrent),
+                infoHash: torrent.infoHash,
+                path: torrent.path,
+                downloaded: utils.sizeReadable(torrent.downloaded, false),
+                uploaded: utils.sizeReadable(torrent.uploaded, false),
+                announce: torrent.announce[0],
+                ratio: torrent.ratio,
+                pieceLength: utils.sizeReadable(torrent.pieceLength, false),
+                numberPieces: torrent.pieces.length,
+                created: torrent.created,
+                createdBy: torrent.createdBy,
+                peers: getPeers(torrent.infoHash)
+            }))
+        }
+    })
+    if(!torrent_exist){
+        res.send(null);
+    }
 }
 
 /**
@@ -95,6 +132,7 @@ exports.getTorrentsShortData = (req, res) => {
  * @param {Result} res 
  */
 exports.addTorrent = (req, res) => {
+    console.log(req);
     var file = req.files.file;
     var filename = new Date().getTime() + '.torrent';
     var path = config.torrent_location + filename;
@@ -184,4 +222,28 @@ function restartTorrent(hash, current_client, path) {
         current_client.add(config.torrent_location + content.filename, { path: path }, function (torrent) {
         });
     });
+}
+
+/**
+ * Return torrent peers list
+ * @param {String} hash
+ * @returns {Array} results
+ */
+function getPeers(hash) {
+    var results = [];
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === hash) {
+            torrent.wires.forEach(wire => {
+                results.push(new Peer({
+                    'address': wire.remoteAddress,
+                    'port': wire.remotePort,
+                    'uploaded': wire.uploaded,
+                    'downloaded': wire.downloaded,
+                    'upload_speed': utils.sizeReadable(wire.uploadSpeed(), true),
+                    'download_speed': utils.sizeReadable(wire.downloadSpeed(), true),
+                }));
+            });
+        }
+    })
+    return results;
 }

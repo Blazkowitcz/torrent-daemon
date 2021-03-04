@@ -12,6 +12,7 @@ module.exports = app => {
      * ROUTE GET
      */
     app.get('/torrents', torrent.getTorrents);
+    app.get('/torrents/:hash', torrent.getTorrentInfo);
     app.get('/torrents-short', torrent.getTorrentsShortData);
     app.post('/torrent-move', torrent.moveTorrent);
 }

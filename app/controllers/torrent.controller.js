@@ -159,8 +159,7 @@ exports.addTorrent = (req, res) => {
  * @param {Result} res 
  */
 exports.moveTorrent = (req, res) => {
-    current_client = torrent_client.getClient();
-    current_client.torrents.forEach(torrent => {
+    torrent_client.getClient().torrents.forEach(torrent => {
         if (torrent.infoHash === req.body.hash) {
             var old_path = torrent.path;
             var filename = torrent.name;
@@ -171,6 +170,20 @@ exports.moveTorrent = (req, res) => {
             res.send(true);
         }
     });
+}
+
+/**
+ * Remove a torrent from client
+ * @param {Request} req 
+ * @param {Result} res 
+ */
+exports.deleteTorrent = (req, res) => {
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.body.hash) {
+            torrent.destroy();
+            res.send(true);
+        }
+    })
 }
 
 /**

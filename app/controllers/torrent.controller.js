@@ -72,9 +72,6 @@ exports.getTorrentInfo = (req, res) => {
     torrent_exist = false;
     torrent_client.getClient().torrents.forEach(torrent => {
         if (torrent.infoHash === req.params.hash) {
-            torrent.wires.forEach(wire => {
-                console.log(wire.uploadSpeed());
-            });
             torrent_exist = true;
             res.send(new Torrent({
                 name: torrent.name,

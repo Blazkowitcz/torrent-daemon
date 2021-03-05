@@ -35,9 +35,11 @@ Torrent.getAll = function getAll(callback) {
     const db = require('../../database');
     var results = [];
     db.all("SELECT * FROM torrents", (err, rows) => {
-        rows.forEach((row) => {
-            results.push(row);
-        })
+        if(rows !== null && typeof rows !== "undefined"){
+            rows.forEach((row) => {
+                results.push(row);
+            })
+        }
         callback(null, results);
     });
 }

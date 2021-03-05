@@ -8,4 +8,8 @@ function success(message) {
     console.log(emo.get('white_check_mark') + "  " + message + " " + emo.get('white_check_mark'));
 }
 
-module.exports = { warning, success }
+function setting(message) {
+    console.log(emo.get('pencil') + "  " + message + " " + emo.get('pencil'));
+}
+
+module.exports = { warning, success, setting }

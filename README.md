@@ -1,19 +1,23 @@
 # torrent-daemon (Tode for friends)
 
-Tode is a torrent client working as a daemon in self-hosted.
+Tode is a torrent client powered by NodeJS and Express. It's a daemon service so it can work in background and can be sync with a client. You can communicate with it by REST API.
 
 ## Requirement
 - Node
 - npm
+
 ## Build
 ```
 npm install
 ```
 
 ## Run
-```
-node server.js
-```
+Edit : `client_conf.json` file and set values :
+- Port
+- Torrent_location (place where .torrent files will be stored)
+- Torrent_destination (place where torrent content will be stored)
+
+Run : ```node server.js```
 
 ## Features
 
@@ -30,3 +34,4 @@ node server.js
 - [ ] Limit speed for a Torrent
 - [ ] Create Torrent
  
+## Bugs

@@ -56,4 +56,12 @@ function sizeReadable(bytes, speed) {
     return result;
 }
 
-module.exports = { getStatus, sizeReadable, getStatusColor }
+function formatDate(date_text) {
+    var date = new Date(date_text);
+    var d = date.getDate();
+    var m = date.getMonth() + 1; //Month from 0 to 11
+    var y = date.getFullYear();
+    return '' + y + '-' + (m<=9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
+}
+
+module.exports = { getStatus, sizeReadable, getStatusColor, formatDate }

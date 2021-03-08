@@ -4,6 +4,7 @@ var config = require('../client_conf.json');
 var utils = require('../app/utils/torrent.utils');
 var emo = require('node-emoji');
 var logs = require('./utils/logs.utils');
+var database = require('./database/index');
 
 var client = null;
 var app = null;
@@ -19,7 +20,9 @@ function init(application) {
     client.on('error', function (err) {
         logs.warning(err.message);
     });
-    logs.success("Client torrent démarré")
+    logs.setting("Port : " + config.port);
+    logs.setting("Start torrent as paused : " + config.torrent.start_paused);
+    logs.success("Client Started")
     startTorrents();
 }
 

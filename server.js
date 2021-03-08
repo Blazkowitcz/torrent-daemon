@@ -5,6 +5,7 @@ const conf = require('./client_conf.json')
 const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
+var logs = require('./app/utils/logs.utils');
 
 var client = client_torrent;
 app.locals.client = client;

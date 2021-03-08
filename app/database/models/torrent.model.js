@@ -29,19 +29,28 @@ Torrent.create = function create(name, hash, location, filename) {
 /**
  * Return all torrents saved in database
  * @param {Function} callback 
- * @returns {callback}
+ * @returns {Function}
  */
 Torrent.getAll = function getAll(callback) {
     const db = require('../../database');
     var results = [];
     db.all("SELECT * FROM torrents", (err, rows) => {
-        rows.forEach((row) => {
-            results.push(row);
-        })
+        if(rows !== null && typeof rows !== "undefined"){
+            rows.forEach((row) => {
+                results.push(row);
+            })
+        }
         callback(null, results);
     });
 }
 
+/**
+ * Change torrent location
+ * @param {String} hash 
+ * @param {String} destination 
+ * @param {Function} callback
+ * @return {Function}
+ */
 Torrent.move = function move(hash, destination, callback) {
     const db = require('../../database');
     db.serialize(function() {
@@ -52,6 +61,12 @@ Torrent.move = function move(hash, destination, callback) {
     });
 }
 
+/**
+ * Return torrent row
+ * @param {String} hash 
+ * @param {Function} callback 
+ * @returns {Torrent}
+ */
 Torrent.getOne = function getOne(hash, callback) {
     const db = require('../../database');
     db.get("SELECT * FROM torrents WHERE hash = " + "'" + hash + "'", (err, row) => {

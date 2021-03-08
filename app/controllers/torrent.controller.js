@@ -72,9 +72,6 @@ exports.getTorrentInfo = (req, res) => {
     torrent_exist = false;
     torrent_client.getClient().torrents.forEach(torrent => {
         if (torrent.infoHash === req.params.hash) {
-            torrent.wires.forEach(wire => {
-                console.log(wire.uploadSpeed());
-            });
             torrent_exist = true;
             res.send(new Torrent({
                 name: torrent.name,
@@ -87,10 +84,10 @@ exports.getTorrentInfo = (req, res) => {
                 downloaded: utils.sizeReadable(torrent.downloaded, false),
                 uploaded: utils.sizeReadable(torrent.uploaded, false),
                 announce: torrent.announce[0],
-                ratio: torrent.ratio,
+                ratio: torrent.ratio.toFixed(2),
                 pieceLength: utils.sizeReadable(torrent.pieceLength, false),
                 numberPieces: torrent.pieces.length,
-                created: torrent.created,
+                created: utils.formatDate(torrent.created),
                 createdBy: torrent.createdBy,
                 peers: getPeers(torrent.infoHash)
             }))
@@ -132,7 +129,6 @@ exports.getTorrentsShortData = (req, res) => {
  * @param {Result} res 
  */
 exports.addTorrent = (req, res) => {
-    console.log(req);
     var file = req.files.file;
     var filename = new Date().getTime() + '.torrent';
     var path = config.torrent_location + filename;
@@ -143,6 +139,9 @@ exports.addTorrent = (req, res) => {
         }
         try {
             current_client.add(config.torrent_location + filename, { path: config.torrent_destination }, function (torrent) {
+                if(config.torrent.start_paused === true){
+                    torrent.pause();
+                }
                 Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
             });
             res.send(true);
@@ -182,6 +181,27 @@ exports.deleteTorrent = (req, res) => {
         if (torrent.infoHash === req.body.hash) {
             torrent.destroy();
             res.send(true);
+        }
+    })
+}
+
+/**
+ * Change torrent file location
+ * @param {Request} req 
+ * @param {Result} res 
+ */
+exports.changeLocation = (req, res) => {
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.body.hash) {
+            torrent.path = req.body.path;
+            Torrent.move(req.body.hash, req.body.path, function (err) {
+                if (!err) {
+                    torrent.rescanFiles();
+                    res.send(true);
+                }else{
+                    res.send(false);
+                }
+            })
         }
     })
 }
@@ -250,8 +270,8 @@ function getPeers(hash) {
                 results.push(new Peer({
                     'address': wire.remoteAddress,
                     'port': wire.remotePort,
-                    'uploaded': wire.uploaded,
-                    'downloaded': wire.downloaded,
+                    'uploaded': utils.sizeReadable(wire.uploaded, false),
+                    'downloaded': utils.sizeReadable(wire.downloaded, false),
                     'upload_speed': utils.sizeReadable(wire.uploadSpeed(), true),
                     'download_speed': utils.sizeReadable(wire.downloadSpeed(), true),
                 }));

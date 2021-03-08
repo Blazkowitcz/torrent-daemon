@@ -1,6 +1,7 @@
 const torrent_client = require('../torrent-client');
 var Torrent = require('../database/models/torrent.model');
 var Peer = require('../database/models/peer.model');
+var File = require('../database/models/file.model');
 var utils = require('../utils/torrent.utils');
 var config = require('../../client_conf.json');
 const fs = require('fs-extra');
@@ -89,7 +90,8 @@ exports.getTorrentInfo = (req, res) => {
                 numberPieces: torrent.pieces.length,
                 created: utils.formatDate(torrent.created),
                 createdBy: torrent.createdBy,
-                peers: getPeers(torrent.infoHash)
+                peers: getPeers(torrent.infoHash),
+                files: getFiles(torrent.files),
             }))
         }
     })
@@ -260,7 +262,7 @@ function restartTorrent(hash, current_client, path) {
 /**
  * Return torrent peers list
  * @param {String} hash
- * @returns {Array} results
+ * @returns {Array}
  */
 function getPeers(hash) {
     var results = [];
@@ -277,6 +279,22 @@ function getPeers(hash) {
                 }));
             });
         }
+    })
+    return results;
+}
+
+/**
+ * Return torrent file list
+ * @param {Object} files
+ * @returns {Array}
+ */
+function getFiles(files) {
+    var results = [];
+    files.forEach(file => {
+        results.push(new File({
+            'name': file.name,
+            'path': file.path.replace(file.name, ''),
+        }))
     })
     return results;
 }

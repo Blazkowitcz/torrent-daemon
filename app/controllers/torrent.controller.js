@@ -187,6 +187,27 @@ exports.deleteTorrent = (req, res) => {
 }
 
 /**
+ * Change torrent file location
+ * @param {Request} req 
+ * @param {Result} res 
+ */
+exports.changeLocation = (req, res) => {
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.body.hash) {
+            torrent.path = req.body.path;
+            Torrent.move(req.body.hash, req.body.path, function (err) {
+                if (!err) {
+                    torrent.rescanFiles();
+                    res.send(true);
+                }else{
+                    res.send(false);
+                }
+            })
+        }
+    })
+}
+
+/**
  * Remove the torrent from the client
  * @param {Torrent} torrent 
  */

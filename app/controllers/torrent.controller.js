@@ -140,6 +140,9 @@ exports.addTorrent = (req, res) => {
         }
         try {
             current_client.add(config.torrent_location + filename, { path: config.torrent_destination }, function (torrent) {
+                if(config.torrent.start_paused === true){
+                    torrent.pause();
+                }
                 Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
             });
             res.send(true);

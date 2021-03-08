@@ -84,10 +84,10 @@ exports.getTorrentInfo = (req, res) => {
                 downloaded: utils.sizeReadable(torrent.downloaded, false),
                 uploaded: utils.sizeReadable(torrent.uploaded, false),
                 announce: torrent.announce[0],
-                ratio: torrent.ratio,
+                ratio: torrent.ratio.toFixed(2),
                 pieceLength: utils.sizeReadable(torrent.pieceLength, false),
                 numberPieces: torrent.pieces.length,
-                created: torrent.created,
+                created: utils.formatDate(torrent.created),
                 createdBy: torrent.createdBy,
                 peers: getPeers(torrent.infoHash)
             }))
@@ -129,7 +129,6 @@ exports.getTorrentsShortData = (req, res) => {
  * @param {Result} res 
  */
 exports.addTorrent = (req, res) => {
-    console.log(req);
     var file = req.files.file;
     var filename = new Date().getTime() + '.torrent';
     var path = config.torrent_location + filename;
@@ -271,8 +270,8 @@ function getPeers(hash) {
                 results.push(new Peer({
                     'address': wire.remoteAddress,
                     'port': wire.remotePort,
-                    'uploaded': wire.uploaded,
-                    'downloaded': wire.downloaded,
+                    'uploaded': utils.sizeReadable(wire.uploaded, false),
+                    'downloaded': utils.sizeReadable(wire.downloaded, false),
                     'upload_speed': utils.sizeReadable(wire.uploadSpeed(), true),
                     'download_speed': utils.sizeReadable(wire.downloadSpeed(), true),
                 }));

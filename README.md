@@ -1,5 +1,5 @@
 # torrent-daemon (Tode for friends)
-[![Node.js](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/nodejs.yaml/badge.svg?branch=master)](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/nodejs.yaml)
+[![Node.js](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/nodejs.yaml/badge.svg?branch=master)](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/nodejs.yaml) [![CodeQL](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/codeql-analysis.yml/badge.svg?branch=master)](https://github.com/Blazkowitcz/torrent-daemon/actions/workflows/codeql-analysis.yml)
 
 Tode is a torrent client powered by NodeJS and Express. It's a daemon service so it can work in background and can be sync with a client. You can communicate with it by REST API.
 

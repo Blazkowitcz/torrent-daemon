@@ -90,6 +90,7 @@ exports.getTorrentInfo = (req, res) => {
                 numberPieces: torrent.pieces.length,
                 created: utils.formatDate(torrent.created),
                 createdBy: torrent.createdBy,
+                paused: torrent.paused,
                 peers: getPeers(torrent.infoHash),
                 files: getFiles(torrent.files),
             }))

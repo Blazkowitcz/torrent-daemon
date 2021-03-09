@@ -96,7 +96,7 @@ exports.getTorrentInfo = (req, res) => {
             }))
         }
     })
-    if(!torrent_exist){
+    if (!torrent_exist) {
         res.send(null);
     }
 }
@@ -142,7 +142,7 @@ exports.addTorrent = (req, res) => {
         }
         try {
             current_client.add(config.torrent_location + filename, { path: config.torrent_destination }, function (torrent) {
-                if(config.torrent.start_paused === true){
+                if (config.torrent.start_paused === true) {
                     torrent.pause();
                 }
                 Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
@@ -201,10 +201,24 @@ exports.changeLocation = (req, res) => {
                 if (!err) {
                     torrent.rescanFiles();
                     res.send(true);
-                }else{
+                } else {
                     res.send(false);
                 }
             })
+        }
+    })
+}
+
+/**
+ * Scan torrent files
+ * @param {Request} req 
+ * @param {Result} res 
+ */
+exports.rescanTorrent = (req, res) => {
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.body.hash) {
+            torrent.rescanFiles();
+            res.send(true);
         }
     })
 }

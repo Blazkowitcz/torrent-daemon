@@ -1,6 +1,7 @@
 const torrent_client = require('../torrent-client');
 var Torrent = require('../database/models/torrent.model');
 var Peer = require('../database/models/peer.model');
+var File = require('../database/models/file.model');
 var utils = require('../utils/torrent.utils');
 var config = require('../../client_conf.json');
 const fs = require('fs-extra');
@@ -89,11 +90,13 @@ exports.getTorrentInfo = (req, res) => {
                 numberPieces: torrent.pieces.length,
                 created: utils.formatDate(torrent.created),
                 createdBy: torrent.createdBy,
-                peers: getPeers(torrent.infoHash)
+                paused: torrent.paused,
+                peers: getPeers(torrent.infoHash),
+                files: getFiles(torrent.files),
             }))
         }
     })
-    if(!torrent_exist){
+    if (!torrent_exist) {
         res.send(null);
     }
 }
@@ -139,7 +142,7 @@ exports.addTorrent = (req, res) => {
         }
         try {
             current_client.add(config.torrent_location + filename, { path: config.torrent_destination }, function (torrent) {
-                if(config.torrent.start_paused === true){
+                if (config.torrent.start_paused === true) {
                     torrent.pause();
                 }
                 Torrent.create(torrent.name, torrent.infoHash, torrent.path, filename);
@@ -198,10 +201,24 @@ exports.changeLocation = (req, res) => {
                 if (!err) {
                     torrent.rescanFiles();
                     res.send(true);
-                }else{
+                } else {
                     res.send(false);
                 }
             })
+        }
+    })
+}
+
+/**
+ * Scan torrent files
+ * @param {Request} req 
+ * @param {Result} res 
+ */
+exports.rescanTorrent = (req, res) => {
+    torrent_client.getClient().torrents.forEach(torrent => {
+        if (torrent.infoHash === req.body.hash) {
+            torrent.rescanFiles();
+            res.send(true);
         }
     })
 }
@@ -260,7 +277,7 @@ function restartTorrent(hash, current_client, path) {
 /**
  * Return torrent peers list
  * @param {String} hash
- * @returns {Array} results
+ * @returns {Array}
  */
 function getPeers(hash) {
     var results = [];
@@ -277,6 +294,22 @@ function getPeers(hash) {
                 }));
             });
         }
+    })
+    return results;
+}
+
+/**
+ * Return torrent file list
+ * @param {Object} files
+ * @returns {Array}
+ */
+function getFiles(files) {
+    var results = [];
+    files.forEach(file => {
+        results.push(new File({
+            'name': file.name,
+            'path': file.path.replace(file.name, ''),
+        }))
     })
     return results;
 }

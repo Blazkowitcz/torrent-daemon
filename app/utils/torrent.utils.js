@@ -56,6 +56,11 @@ function sizeReadable(bytes, speed) {
     return result;
 }
 
+/**
+ * Format date to a readable string
+ * @param {String} date_text
+ * @returns {String}
+ */
 function formatDate(date_text) {
     var date = new Date(date_text);
     var d = date.getDate();

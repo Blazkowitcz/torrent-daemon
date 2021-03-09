@@ -9,6 +9,7 @@ module.exports = app => {
     app.post('/add-torrent', torrent.addTorrent);
     app.post('/torrent-move', torrent.moveTorrent);
     app.post('/torrent-change-location', torrent.changeLocation);
+    app.post('/torrent-rescan', torrent.rescanTorrent);
 
     /**
      * ROUTE GET

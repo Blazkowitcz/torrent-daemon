@@ -16,7 +16,7 @@ var app = null;
  */
 function init(application) {
     app = application;
-    client = new WebTorrent();
+    client = new WebTorrent(config.client);
     client.on('error', function (err) {
         logs.warning(err.message);
     });

@@ -3,6 +3,7 @@ const Torrent = require ('../models/torrent.model');
 const parse_torrent = require('parse-torrent');
 const crypto = require('crypto')
 const fs = require('fs');
+const client = require('../modules/client');
 
 /**
  * Return All Torrents
@@ -10,8 +11,25 @@ const fs = require('fs');
  * @param {Response} res 
  */
 exports.getTorrents = async (req, res) => {
-    let torrents = db.get('torrents').value();
-    res.send(torrents);
+    //let torrents = db.get('torrents').value();
+    let torrents = client.getTorrents();
+    let result = []
+    torrents.forEach(torrent => {
+        result.push({
+            name: torrent.name,
+            announce: torrent.announce,
+            path: torrent.path,
+            peers: torrent._peers,
+            received: torrent.received,
+            uploaded: torrent.uploaded,
+            infoHash: torrent.infoHash,
+            size: torrent.length,
+            created: torrent.created,
+            createdBy: torrent.createdBy,
+            completed: torrent.done
+        });
+    });
+    res.send(result);
 }
 
 /**
@@ -40,6 +58,7 @@ exports.addTorrent = async (req, res) => {
     torrent.setFileName(filename);
     db.get('torrents').push(torrent).write();
     req.files.file.mv('./public/torrents/' + filename);
+    client.addTorrent(req.files.file.data);
     res.send(true); 
 }
 

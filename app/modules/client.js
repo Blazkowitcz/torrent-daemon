@@ -14,6 +14,9 @@ function init(application){
     client.on('ready', function(){
         console.log("### Torrent server started ###");
     });
+    client.on('torrent', function(){
+        console.log('torrent added');
+    })
 }
 
 function startTorrents(){
@@ -23,4 +26,13 @@ function startTorrents(){
     })
 }
 
-module.exports = { init, startTorrents }
+function addTorrent(torrent) {
+    client.add(torrent);
+}
+
+function getTorrents() {
+    console.log(client.torrents);
+    return client.torrents;
+}
+
+module.exports = { init, startTorrents, addTorrent, getTorrents }

@@ -1,6 +1,18 @@
+const crypto = require('crypto');
+
 class Torrent {
 
-    constructor(){}
+    constructor(){
+        this.uuid = crypto.randomUUID();
+    }
+
+    /**
+     * Return Torrent UUID
+     * @returns 
+     */
+    getUuid(){
+        return this.uuid;
+    }
 
     /**
      * Return Torrent Name
@@ -38,3 +50,5 @@ class Torrent {
         return this;
     }
 }
+
+module.exports = Torrent
